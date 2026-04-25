@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — SSD & Storage Systems Researcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8f7f4;
+  --bg2: #f0ede8;
+  --surface: #ffffff;
+  --surface2: #f4f2ef;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.14);
+  --text: #1a1916;
+  --text2: #6b6860;
+  --text3: #a8a49e;
+  --accent: #3a3a8c;
+  --accent2: #5252b8;
+  --accent-light: rgba(58,58,140,0.08);
+  --green: #1a7a4a;
+  --green-bg: rgba(26,122,74,0.07);
+  --amber: #8a5a00;
+  --amber-bg: rgba(138,90,0,0.07);
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --serif: 'Playfair Display', serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image: radial-gradient(circle, rgba(0,0,0,0.055) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* PAGE SYSTEM */
+.page { display:none; position:relative; z-index:1; }
+.page.active { display:block; }
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 1.1rem 3rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(248,247,244,0.93);
+  backdrop-filter: blur(14px);
+}
+.nav-logo {
+  font-family: var(--mono); font-size:12px;
+  color: var(--accent); letter-spacing:0.1em;
+  text-decoration:none; cursor:pointer;
+}
+.nav-links { display:flex; gap:2rem; list-style:none; }
+.nav-links a {
+  font-family:var(--mono); font-size:12px;
+  color:var(--text2); text-decoration:none;
+  letter-spacing:0.06em; transition:color 0.2s; cursor:pointer;
+}
+.nav-links a:hover { color:var(--text); }
+.nav-back {
+  display:none; align-items:center; gap:8px;
+  font-family:var(--mono); font-size:12px;
+  color:var(--text2); cursor:pointer; letter-spacing:0.06em;
+  transition:color 0.2s; background:none; border:none;
+}
+.nav-back:hover { color:var(--accent); }
+
+/* COMMON */
+.wrap { max-width:1060px; margin:0 auto; padding:0 3rem; }
+.section-tag {
+  font-family:var(--mono); font-size:11px; color:var(--accent2);
+  letter-spacing:0.15em; text-transform:uppercase; margin-bottom:0.6rem;
+  display:flex; align-items:center; gap:8px;
+}
+.section-tag::before {
+  content:''; display:inline-block;
+  width:14px; height:1px; background:var(--accent2);
+}
+.section-title {
+  font-family:var(--serif); font-size:2.6rem;
+  font-weight:400; line-height:1.1; letter-spacing:-0.01em; color:var(--text);
+}
+.btn {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:0.65rem 1.5rem; border-radius:4px;
+  font-family:var(--mono); font-size:11px; letter-spacing:0.08em;
+  text-decoration:none; transition:all 0.2s; cursor:pointer; border:none;
+}
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:var(--accent2); transform:translateY(-1px); }
+.btn-ghost { background:transparent; color:var(--text2); border:1px solid var(--border2); }
+.btn-ghost:hover { background:var(--surface2); color:var(--text); border-color:var(--accent); }
+.paper-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:3px 11px; border-radius:20px;
+  font-family:var(--mono); font-size:11px; letter-spacing:0.06em;
+}
+.badge-systor { background:var(--accent-light); border:1px solid rgba(58,58,140,0.2); color:var(--accent2); }
+.badge-kcc { background:var(--green-bg); border:1px solid rgba(26,122,74,0.2); color:var(--green); }
+.badge-ksc { background:var(--amber-bg); border:1px solid rgba(138,90,0,0.2); color:var(--amber); }
+.badge-award { background:rgba(138,90,0,0.12); border:1px solid rgba(138,90,0,0.3); color:var(--amber); }
+.fade-in { opacity:0; transform:translateY(18px); transition:opacity 0.55s ease, transform 0.55s ease; }
+.fade-in.visible { opacity:1; transform:translateY(0); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.anim { animation: fadeUp 0.4s ease both; }
+
+/* HERO */
+#hero {
+  min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+  padding-top:5rem; max-width:100%;
+}
+.hero-inner { max-width:1060px; margin:0 auto; padding:0 3rem; width:100%; }
+.hero-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--mono); font-size:11px; letter-spacing:0.15em;
+  color:var(--accent2); margin-bottom:1.8rem; text-transform:uppercase;
+}
+.hero-tag::before { content:''; display:inline-block; width:18px; height:1px; background:var(--accent); }
+.hero-name {
+  font-family:var(--serif); font-size:clamp(3.2rem,7.5vw,6.5rem);
+  font-weight:400; line-height:1.0; letter-spacing:-0.02em;
+  margin-bottom:1.5rem; color:var(--text);
+}
+.hero-name em { font-style:italic; color:var(--accent2); }
+.hero-desc { font-size:1rem; color:var(--text2); max-width:560px; margin-bottom:2.5rem; font-weight:300; line-height:1.8; }
+.hero-cta { display:flex; gap:1rem; flex-wrap:wrap; }
+.hero-stats {
+  display:flex; gap:2.5rem; margin-top:5rem;
+  padding-top:2.5rem; border-top:1px solid var(--border); flex-wrap:wrap;
+}
+.stat-item { display:flex; flex-direction:column; gap:4px; }
+.stat-num { font-family:var(--mono); font-size:1.7rem; color:var(--text); font-weight:300; }
+.stat-label { font-size:10px; color:var(--text3); letter-spacing:0.12em; text-transform:uppercase; }
+
+/* RESEARCH LIST */
+#research-list { padding:7rem 0 5rem; border-top:1px solid var(--border); }
+.research-head { margin-bottom:2.5rem; }
+.paper-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:2rem 2.2rem; margin-bottom:1.2rem;
+  cursor:pointer; transition:border-color 0.2s, box-shadow 0.2s;
+  display:flex; align-items:flex-start; gap:1.5rem;
+}
+.paper-card:hover { border-color:var(--accent2); box-shadow:0 2px 16px rgba(58,58,140,0.07); }
+.paper-card-body { flex:1; }
+.paper-card-arrow { font-size:18px; color:var(--text3); flex-shrink:0; margin-top:4px; transition:transform 0.2s, color 0.2s; }
+.paper-card:hover .paper-card-arrow { transform:translateX(4px); color:var(--accent2); }
+.paper-card-badges { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.8rem; }
+.paper-card-title { font-family:var(--serif); font-size:1.2rem; font-weight:400; line-height:1.4; margin-bottom:0.6rem; color:var(--text); }
+.paper-card-summary { font-size:13px; color:var(--text2); line-height:1.7; }
+
+/* APPS LIST */
+#apps-list { padding:0 0 7rem; border-top:1px solid var(--border); padding-top:5rem; }
+.apps-note { font-family:var(--mono); font-size:12px; color:var(--text3); margin-bottom:2rem; display:inline-block; }
+.apps-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.2rem; }
+.app-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px; padding:1.75rem;
+  cursor:pointer; transition:border-color 0.2s, box-shadow 0.2s;
+  display:flex; flex-direction:column;
+}
+.app-card:hover { border-color:var(--accent2); box-shadow:0 2px 16px rgba(58,58,140,0.07); }
+.app-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:1rem; }
+.app-name { font-size:1rem; font-weight:500; margin-bottom:0.3rem; }
+.app-tech { font-family:var(--mono); font-size:11px; color:var(--text3); margin-bottom:0.75rem; }
+.app-desc { font-size:13px; color:var(--text2); line-height:1.7; flex:1; }
+.app-status { display:inline-block; margin-top:1rem; padding:3px 10px; border-radius:20px; font-family:var(--mono); font-size:11px; align-self:flex-start; }
+.status-wip { background:var(--amber-bg); color:var(--amber); border:1px solid rgba(138,90,0,0.2); }
+.status-done { background:var(--green-bg); color:var(--green); border:1px solid rgba(26,122,74,0.2); }
+
+/* DETAIL PAGES */
+.detail-page { min-height:100vh; padding:7rem 0 6rem; }
+.detail-inner { max-width:800px; margin:0 auto; padding:0 3rem; }
+.detail-badges { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+.detail-title { font-family:var(--serif); font-size:2rem; font-weight:400; line-height:1.3; letter-spacing:-0.01em; margin-bottom:0.6rem; color:var(--text); }
+.detail-meta { font-family:var(--mono); font-size:11px; color:var(--text3); margin-bottom:2rem; letter-spacing:0.05em; }
+.detail-divider { height:1px; background:var(--border); margin:2.5rem 0; }
+.detail-section-label { font-family:var(--mono); font-size:11px; color:var(--accent2); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.75rem; }
+.detail-body { font-size:0.95rem; color:var(--text2); line-height:1.85; }
+.detail-body p { margin-bottom:1rem; }
+.detail-body strong { color:var(--text); font-weight:500; }
+.contrib-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1rem; margin:1.5rem 0; }
+.contrib-item { background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:1.1rem; border-left:3px solid var(--accent2); }
+.contrib-label { font-family:var(--mono); font-size:10px; color:var(--accent2); margin-bottom:0.4rem; letter-spacing:0.08em; }
+.contrib-title { font-size:13px; font-weight:500; margin-bottom:0.4rem; }
+.contrib-text { font-size:12px; color:var(--text2); line-height:1.6; }
+.result-chips { display:flex; gap:0.75rem; flex-wrap:wrap; margin:1.5rem 0; }
+.chip { background:var(--accent-light); border:1px solid rgba(58,58,140,0.18); border-radius:4px; padding:4px 12px; font-family:var(--mono); font-size:12px; color:var(--accent2); }
+.chip strong { font-size:14px; }
+.detail-placeholder {
+  background:var(--surface2); border:1px dashed var(--border2);
+  border-radius:6px; padding:2rem; margin:1.5rem 0;
+  font-size:13px; color:var(--text3); line-height:1.7; font-style:italic;
+}
+
+footer {
+  position:relative; z-index:1;
+  border-top:1px solid var(--border);
+  padding:2.5rem 3rem; text-align:center;
+  font-family:var(--mono); font-size:11px; color:var(--text3); letter-spacing:0.08em;
+}
+
+@media(max-width:680px){
+  nav { padding:1rem 1.5rem; }
+  .nav-links { gap:1.2rem; }
+  .wrap,.hero-inner,.detail-inner { padding:0 1.5rem; }
+  .hero-name { font-size:2.8rem; }
+  .hero-stats { gap:1.5rem; }
+  footer { padding:2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo" onclick="goHome()">main</span>
+  <ul class="nav-links" id="nav-main-links">
+    <li><a onclick="scrollToId('research-list')">Research</a></li>
+    <li><a onclick="scrollToId('apps-list')">Apps</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="https://github.com/blacky0409" target="_blank" id="nav-github"
+      style="display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;color:var(--text2);text-decoration:none;letter-spacing:0.06em;transition:color 0.2s;"
+      onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text2)'">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+      GitHub
+    </a>
+    <button class="nav-back" id="nav-back" onclick="goHome()">← Back</button>
+  </div>
+</nav>
+
+<!-- ══════════ MAIN PAGE ══════════ -->
+<div id="page-main" class="page active">
+
+  <div id="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">SSLAB · Memory & Storage Systems</div>
+      <h1 class="hero-name">Storage<br>Systems<br><em>Researcher.</em></h1>
+      <p class="hero-desc">
+        C/C++ 기반의 로우레벨 디버깅과 스토리지 아키텍처 분석을 통해, 
+        하드웨어의 제약을 효율적인 소프트웨어 로직으로 돌파하는 개발자입니다.
+      </p>
+      <div class="hero-cta">
+        <span class="btn btn-primary" onclick="scrollToId('research-list')">View Research</span>
+        <span class="btn btn-ghost" onclick="scrollToId('apps-list')">Side Projects</span>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num">3</span>
+          <span class="stat-label">Publications</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">1</span>
+          <span class="stat-label">Award</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">SYSTOR</span>
+          <span class="stat-label">Target Venue</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="research-list">
+    <div class="wrap">
+      <div class="research-head fade-in">
+        <div class="section-tag">Publications</div>
+        <h2 class="section-title">Research</h2>
+      </div>
+
+      <div class="paper-card fade-in" onclick="showPage('page-systor')">
+        <div class="paper-card-body">
+          <div class="paper-card-badges">
+            <span class="paper-badge badge-systor">SYSTOR 2025 — Submission</span>
+          </div>
+          <div class="paper-card-title">
+            A Picture Is Worth 1000 Approximations: Emulating and Directly Analyzing Physical Fragmentation on Aged SSDs
+          </div>
+          <div class="paper-card-summary">
+            SSD aging 상태를 즉시 재현하는 snapshot 기반 방법론과, 상용 SSD 블랙박스 속 physical fragmentation을
+            최초로 정량적으로 제어·분석한 SPF 모델을 제안합니다.
+          </div>
+        </div>
+        <div class="paper-card-arrow">→</div>
+      </div>
+
+      <div class="paper-card fade-in" onclick="showPage('page-kcc')">
+        <div class="paper-card-body">
+          <div class="paper-card-badges">
+            <span class="paper-badge badge-kcc">KCC 2024</span>
+          </div>
+          <div class="paper-card-title">
+            Tiered Memory 구조를 위한 LSM Tree 개선 연구
+          </div>
+          <div class="paper-card-summary">
+            LSM Tree에서 hot / cold data 영역을 분리 저장하는 시스템을 구현하여
+            계층형 메모리 구조에서의 데이터 지역성을 향상시킨 연구입니다.
+          </div>
+        </div>
+        <div class="paper-card-arrow">→</div>
+      </div>
+
+      <div class="paper-card fade-in" onclick="showPage('page-ksc')">
+        <div class="paper-card-body">
+          <div class="paper-card-badges">
+            <span class="paper-badge badge-ksc">KSC 2023</span>
+            <span class="paper-badge badge-award">🏅 장려상</span>
+          </div>
+          <div class="paper-card-title">
+            NVMeVirt 다중 Instance 기능 및 성능 모델 개선 연구
+          </div>
+          <div class="paper-card-summary">
+            NVMeVirt 에뮬레이터에 다중 인스턴스 기능을 추가하고 성능 모델을 개선하여
+            보다 정확한 SSD 시뮬레이션 환경을 구현한 연구입니다.
+          </div>
+        </div>
+        <div class="paper-card-arrow">→</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="apps-list">
+    <div class="wrap">
+      <div class="fade-in" style="margin-bottom:2rem;">
+        <div class="section-tag">Side Projects</div>
+        <h2 class="section-title">Apps</h2>
+      </div>
+      <div class="apps-note fade-in">// hobby projects — 개인 앱 기록용</div>
+      <div class="apps-grid fade-in">
+        <div class="app-card" onclick="showPage('page-app1')">
+          <div class="app-icon" style="background:rgba(26,122,74,0.08);">💰</div>
+          <div class="app-name">가계부 앱</div>
+          <div class="app-tech">Vibe Coding · Mobile App</div>
+          <div class="app-desc">바이브 코딩으로 제작한 간단한 개인 가계부 앱.</div>
+          <span class="app-status status-done">Released</span>
+        </div>
+        <div class="app-card" onclick="showPage('page-app2')">
+          <div class="app-icon" style="background:var(--accent-light);">📖</div>
+          <div class="app-name">AI OOTD 일기 앱</div>
+          <div class="app-tech">AI · Character · OOTD</div>
+          <div class="app-desc">그날의 OOTD를 AI로 캐릭터에 입히는 일기 앱.</div>
+          <span class="app-status status-wip">Private Beta</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>SSLAB · Storage Systems Research</p>
+    <p style="margin-top:0.4rem;">Contact: leeyun8048@gmail.com</p>
+  </footer>
+</div>
+
+<!-- ══════════ DETAIL: SYSTOR ══════════ -->
+<div id="page-systor" class="page">
+  <div class="detail-page">
+    <div class="detail-inner">
+      <div class="detail-badges anim">
+        <span class="paper-badge badge-systor">SYSTOR 2025 — Submission</span>
+      </div>
+      <h1 class="detail-title anim">
+        A Picture Is Worth 1000 Approximations:<br>
+        Emulating and Directly Analyzing Physical Fragmentation on Aged SSDs
+      </h1>
+      <div class="detail-meta anim">
+        SSLAB &nbsp;·&nbsp; NVMeVirt &nbsp;·&nbsp; SSD Aging &nbsp;·&nbsp; Physical Fragmentation &nbsp;·&nbsp; FTL
+      </div>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Overview - I should modify</div>
+        <div class="detail-body">
+          <p>SSD aging은 현실적인 스토리지 성능 평가에 필수적이나, aged device 상태를 재현하려면
+          며칠씩 연속 workload를 실행해야 합니다. 본 논문에서는 aged SSD의 완전한 내부 상태를
+          캡처하고 새로운 에뮬레이터 인스턴스에 즉시 복원하는 <strong>snapshot 기반 방법론</strong>을 제안합니다.</p>
+          <p>또한 상용 SSD의 블랙박스 특성으로 인해 접근 불가했던 <strong>physical fragmentation</strong>을
+          직접 분석할 수 있는 3-파라미터 SPF 모델을 설계했습니다.</p>
+        </div>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Key Contributions</div>
+        <div class="contrib-grid">
+          <div class="contrib-item">
+            <div class="contrib-label">01 / Snapshot</div>
+            <div class="contrib-title">SSD 상태 캡처 & 즉시 복원</div>
+            <div class="contrib-text">13일이 걸리던 aging 과정을 Valid-Only dump로 수십 초 내 재현.</div>
+          </div>
+          <div class="contrib-item">
+            <div class="contrib-label">02 / SPF Model</div>
+            <div class="contrib-title">Physical Fragmentation 정량 제어</div>
+            <div class="contrib-text">P<sub>degree</sub>, L<sub>burst</sub>, N<sub>streams</sub> 세 파라미터로 0~100% 재현 가능한 fragmentation 모델.</div>
+          </div>
+          <div class="contrib-item">
+            <div class="contrib-label">03 / Analysis</div>
+            <div class="contrib-title">논리 & 물리 파편화 복합 분석</div>
+            <div class="contrib-text">2×2 실험 매트릭스로 독립적·복합적 성능 영향 최초 정량화.</div>
+          </div>
+        </div>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Key Results</div>
+        <div class="result-chips">
+          <span class="chip"><strong>21.2%</strong> seq. throughput drop</span>
+          <span class="chip"><strong>40.1%</strong> p99 latency increase</span>
+          <span class="chip">QD=32 at peak vulnerability</span>
+          <span class="chip">13 days → seconds</span>
+        </div>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Details</div>
+        <div class="detail-placeholder">
+          ✏️ 이 영역은 직접 내용을 채워주세요.<br>
+          실험 설정, 추가 분석 내용, 의의, 향후 연구 방향 등을 자유롭게 작성하시면 됩니다.<br>
+          HTML에서 이 &lt;div class="detail-placeholder"&gt; 블록을 교체하세요.
+        </div>
+      </div>
+      <div style="margin-top:2rem;" class="anim">
+        <a href="p.pdf" class="btn btn-primary" target="_blank">Read Full Paper (PDF)</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DETAIL: KCC 2024 ══════════ -->
+<div id="page-kcc" class="page">
+  <div class="detail-page">
+    <div class="detail-inner">
+      <div class="detail-badges anim">
+        <span class="paper-badge badge-kcc">KCC 2024</span>
+      </div>
+      <h1 class="detail-title anim">Tiered Memory 구조를 위한 LSM Tree 개선 연구</h1>
+      <div class="detail-meta anim">
+        한국정보과학회 KCC 2024 &nbsp;·&nbsp; LSM Tree &nbsp;·&nbsp; Tiered Memory &nbsp;·&nbsp; Hot/Cold Data Separation
+      </div>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Overview</div>
+        <div class="detail-body">
+          <p>Tiered Memory 구조 환경에서 LSM Tree의 hot data와 cold data를 분리하여
+          저장하는 시스템을 구현한 연구입니다.</p>
+          <p>계층형 메모리 구조(Tiered Memory)에서 LSM Tree 접근 패턴을 분석하고,
+          데이터 지역성을 향상시키는 방향으로 LSM Tree 구조를 개선했습니다.</p>
+        </div>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Details</div>
+        <div class="detail-placeholder">
+          ✏️ 이 영역은 직접 내용을 채워주세요.<br>
+          구현 방법, 실험 결과, 기여 내용 등을 자유롭게 작성하시면 됩니다.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DETAIL: KSC 2023 ══════════ -->
+<div id="page-ksc" class="page">
+  <div class="detail-page">
+    <div class="detail-inner">
+      <div class="detail-badges anim">
+        <span class="paper-badge badge-ksc">KSC 2023</span>
+        <span class="paper-badge badge-award">🏅 장려상</span>
+      </div>
+      <h1 class="detail-title anim">NVMeVirt 다중 Instance 기능 및 성능 모델 개선 연구</h1>
+      <div class="detail-meta anim">
+        한국정보과학회 KSC 2023 &nbsp;·&nbsp; NVMeVirt &nbsp;·&nbsp; SSD Emulator &nbsp;·&nbsp; Multi-Instance &nbsp;·&nbsp; 장려상 수상
+      </div>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Overview</div>
+        <div class="detail-body">
+          <p>NVMeVirt 에뮬레이터에 다중 인스턴스 기능을 추가하고 성능 모델을 개선한 연구입니다.</p>
+          <p>보다 정확한 SSD 시뮬레이션을 위한 내부 파라미터 튜닝을 수행하였으며,
+          한국정보과학회 KSC 2023에서 장려상을 수상하였습니다.</p>
+        </div>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Details</div>
+        <div class="detail-placeholder">
+          ✏️ 이 영역은 직접 내용을 채워주세요.<br>
+          구현 방법, 실험 결과, 기여 내용 등을 자유롭게 작성하시면 됩니다.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DETAIL: APP 1 ══════════ -->
+<div id="page-app1" class="page">
+  <div class="detail-page">
+    <div class="detail-inner">
+      <div class="anim" style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+        <div class="app-icon" style="background:rgba(26,122,74,0.08);width:52px;height:52px;border-radius:12px;font-size:24px;flex-shrink:0;">💰</div>
+        <div>
+          <h1 class="detail-title" style="font-size:1.6rem;margin-bottom:0.2rem;">가계부 앱</h1>
+          <div class="detail-meta" style="margin-bottom:0;">Vibe Coding · Mobile App</div>
+        </div>
+      </div>
+      <span class="app-status status-done anim">Released</span>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Overview</div>
+        <div class="detail-body">
+          <p>바이브 코딩으로 제작한 간단한 개인 가계부 앱입니다.</p>
+          <p>수입/지출 입력, 카테고리별 통계, 월별 리포트 등 기본 기능을 구현했습니다.</p>
+        </div>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Details</div>
+        <div class="detail-placeholder">
+          ✏️ 이 영역은 직접 내용을 채워주세요.<br>
+          사용 기술 스택, 스크린샷, 주요 기능 설명 등을 자유롭게 추가하세요.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DETAIL: APP 2 ══════════ -->
+<div id="page-app2" class="page">
+  <div class="detail-page">
+    <div class="detail-inner">
+      <div class="anim" style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+        <div class="app-icon" style="background:var(--accent-light);width:52px;height:52px;border-radius:12px;font-size:24px;flex-shrink:0;">📖</div>
+        <div>
+          <h1 class="detail-title" style="font-size:1.6rem;margin-bottom:0.2rem;">AI OOTD 일기 앱</h1>
+          <div class="detail-meta" style="margin-bottom:0;">AI · Character · OOTD · Generative</div>
+        </div>
+      </div>
+      <span class="app-status status-wip anim">Private Beta</span>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Overview</div>
+        <div class="detail-body">
+          <p>그날의 OOTD를 AI로 개인 캐릭터에 입히는 기술이 핵심인 일기 앱입니다.</p>
+          <p>옷차림 이미지를 분석해 캐릭터에 반영하는 generative AI 파이프라인이 내장되어 있으며, 현재 비공개 테스트 중입니다.</p>
+        </div>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="anim">
+        <div class="detail-section-label">Details</div>
+        <div class="detail-placeholder">
+          ✏️ 이 영역은 직접 내용을 채워주세요.<br>
+          사용 기술 스택, AI 파이프라인 설명, 스크린샷 등을 자유롭게 추가하세요.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('nav-main-links').style.display = 'none';
+  document.getElementById('nav-back').style.display = 'flex';
+  window.scrollTo(0, 0);
+}
+function goHome() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-main').classList.add('active');
+  document.getElementById('nav-main-links').style.display = 'flex';
+  document.getElementById('nav-back').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+function scrollToId(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+const obs = new IntersectionObserver(
+  entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+  { threshold: 0.08 }
+);
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
