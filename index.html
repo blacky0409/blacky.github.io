@@ -489,22 +489,49 @@ footer {
       <div class="detail-meta anim">
         한국정보과학회 KSC 2023 &nbsp;·&nbsp; NVMeVirt &nbsp;·&nbsp; SSD Emulator &nbsp;·&nbsp; Multi-Instance &nbsp;·&nbsp; 장려상 수상
       </div>
+      
+      <div class="detail-image-container anim" style="margin: 25px 0; text-align: center;">
+        <img src="award_image_path.jpg" alt="KSC 2023 장려상 상장" style="max-width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+      </div>
+
       <div class="detail-divider"></div>
+      
       <div class="anim">
         <div class="detail-section-label">Overview</div>
         <div class="detail-body">
-          <p>NVMeVirt 에뮬레이터에 다중 인스턴스 기능을 추가하고 성능 모델을 개선한 연구입니다.</p>
-          <p>보다 정확한 SSD 시뮬레이션을 위한 내부 파라미터 튜닝을 수행하였으며,
-          한국정보과학회 KSC 2023에서 장려상을 수상하였습니다.</p>
+          <p>차세대 스토리지인 ZNS SSD를 연구하기 위해 학계와 산업계는 NVMeVirt와 같은 커널 기반 에뮬레이터를 널리 사용합니다. 하지만 글로벌 스토리지 연구(IEEE 2023)에서 지적되었듯, 기존 NVMeVirt는 실제 하드웨어의 특성을 담아내지 못하는 치명적인 결함이 있었습니다. 구체적으로, 핵심 연산인 append와 write의 Latency를 동일하게 처리하는 로직 오류가 있었고, 플래시 메모리의 물리적 특성인 블록 Erase 비용이 reset 연산에 누락되어 시뮬레이션의 신뢰도가 떨어졌습니다. 또한, 전역 변수 중심의 단일 디바이스 종속적인 아키텍처로 인해 대규모 시스템 환경을 모사할 수 없었습니다. 저는 시스템 엔지니어로서 이러한 글로벌 오픈소스의 구조적/논리적 문제를 직접 코드로 해결하는 프로젝트를 주도했습니다.</p>
         </div>
       </div>
+      
       <div class="detail-divider"></div>
+      
       <div class="anim">
-        <div class="detail-section-label">Details</div>
-        <div class="detail-placeholder">
-          ✏️ 이 영역은 직접 내용을 채워주세요.<br>
-          구현 방법, 실험 결과, 기여 내용 등을 자유롭게 작성하시면 됩니다.
+        <div class="detail-section-label">Technical Contributions</div>
+        <div class="detail-body">
+          <p style="margin-bottom: 20px;"><strong>2-1. 물리적 하드웨어 특성을 반영한 ZNS 모델 재설계:</strong> 기존 시스템에서 하나로 묶여 있던 append와 write의 처리 파이프라인을 분석하고, append 시 발생하는 추가적인 오버헤드를 로직에 반영하여 지연시간 모델을 분리했습니다. 또한, Samsung 980 PRO의 실제 Erase Latency 스펙을 분석하여 기존에 누락되어 있던 reset 연산 비용을 신규 구현했습니다. 연산의 실제 실행 시간까지 실측하여 합산하는 정교한 모델링을 통해 기존에 있던 NVMeVirt의 문제를 고쳤습니다.</p>
+          <p><strong>2-2. 커널 리소스 격리 및 sysfs 기반의 확장 가능한 아키텍처 구축:</strong> 대규모 병렬 테스트가 불가능했던 기존의 단일 인스턴스 제약을 없애기 위해 C 언어 기반의 커널 모듈을 대대적으로 리팩토링했습니다. 전역 변수(Global Variable)에 의존하던 리소스 할당 방식을 로컬 변수 기반으로 전환하여 메모리를 격리하고, 컴파일 타임에 결정되던 설정을 런타임 동적 로딩 구조로 변경했습니다. 동시에 기존 procfs를 sysfs 인터페이스로 개편하여 사용자가 /sys 디렉토리에서 다수의 가상 디바이스를 독립적으로 생성하고 제어할 수 있는 체계적인 관리 환경을 구현했습니다.</p>
         </div>
+      </div>
+
+      <div class="detail-divider"></div>
+
+      <div class="anim">
+        <div class="detail-section-label">Impact</div>
+        <div class="detail-body">
+          <p>이러한 코드 레벨의 아키텍처 개선과 모델 패치를 통해, 기존 NVMeVirt 대비 최대 256개의 독립적인 가상 인스턴스를 동시 구동할 수 있는 시스템 확장성을 확보했습니다. 수많은 디바이스가 동시에 I/O를 발생시키는 극한의 부하 상황에서도 각 인스턴스가 성능 간섭 없이 안정적으로 동작함을 증명했습니다. ZNS 모델 재설계를 통해, IOPS 및 bandwidth 측면에서 실제 상용 ZNS 디바이스에 부합하는 신뢰도 높은 시스템을 구축했습니다.</p>
+        </div>
+      </div>
+
+      <div class="detail-divider"></div>
+
+      <div class="detail-footer anim" style="margin-top: 40px; display: flex; gap: 15px; justify-content: center;">
+        <a href="paper_file_path.pdf" target="_blank" style="display: inline-flex; align-items: center; padding: 12px 24px; background-color: #f0f0f0; color: #333; text-decoration: none; border-radius: 8px; font-weight: 600; transition: background 0.3s;">
+          논문 PDF 보기
+        </a>
+        <a href="https://github.com/snu-csl/nvmevirt" target="_blank" style="display: inline-flex; align-items: center; padding: 12px 24px; background-color: #24292e; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600; transition: opacity 0.3s;">
+          <svg height="20" viewBox="0 0 16 16" width="20" style="fill: #fff; margin-right: 8px;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+          GitHub 저장소 방문
+        </a>
       </div>
     </div>
   </div>
