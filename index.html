@@ -557,9 +557,8 @@ footer {
           <p>본 프로젝트는 CXL(Compute Express Link) 기술 발전으로 도입된 <strong>Tiered Memory 환경</strong>에서, 기존 LSM Tree 구조가 가지는 성능적 한계를 분석하고 이를 최적화한 새로운 아키텍처를 설계 및 구현한 연구입니다.</p>
           
           <div class="detail-image-container">
-            <div class="image-placeholder">
-              <span class="image-label">[그림 2] CXL를 통한 Tiered Memory 구조</span>
-            </div>
+            <img src="images/cxl_tiered_memory.png" alt="[그림 1] CXL를 통한 Tiered Memory 구조" class="portfolio-image">
+            <p class="image-caption">[그림 1] CXL를 통한 Tiered Memory 구조</p>
           </div>
 
           <p>최근 빠른 주 메모리(Fast Memory)와 용량이 큰 서브 메모리(Slow Memory)를 함께 사용하는 환경이 대두되었습니다. 하지만 기존의 <strong>Monolithic 구조 LSM Tree</strong>는 데이터 검색 시 속도가 느린 서브 메모리까지 탐색해야 하므로 이러한 계층형 환경에서 I/O 효율이 급격히 저하되는 한계가 있었습니다. 저는 이러한 하드웨어 구조적 한계를 소프트웨어 아키텍처 개선으로 해결하여 안정적인 성능을 확보하고자 했습니다.</p>
@@ -576,16 +575,15 @@ footer {
           <p>문제를 해결하기 위해 WiscKey 논문에서 제시된 <strong>'Key sorting과 가비지 컬렉션의 Decoupling'</strong> 아이디어를 시스템 코드로 직접 구현했습니다.</p>
           
           <div class="detail-image-container">
-            <div class="image-placeholder">
-              <span class="image-label">[Figure 4] WiscKey Data Layout on SSD</span>
-            </div>
+            <img src="wisckey_data_layout.png" alt="[그림 2] WiscKey Data Layout on SSD" class="portfolio-image">
+            <p class="image-caption">[그림 2] WiscKey Data Layout on SSD</p>
           </div>
 
           <p>입력 데이터에서 Key와 해당 Value의 물리적 주소(Location/Offset 및 Size)만을 LSM Tree에 저장하고, 실제 데이터 용량의 대부분을 차지하는 Value는 별도의 로그 파일(vLog)에 순차적으로 Append하는 방식을 취했습니다.</p>
           <ul>
             <li><strong>핵심 이점:</strong> Value 데이터가 트리에서 제외됨으로써 LSM Tree의 전체 크기가 획기적으로 축소됩니다.</li>
             <li><strong>성능 최적화:</strong> 작아진 트리 전체를 접근 속도가 매우 빠른 주 메모리 상에 온전히 Cache할 수 있어, 검색 시 발생하는 서브 메모리 탐색 오버헤드를 완전히 제거했습니다.</li>
-            <li><strong>I/O 증폭 해결:</strong> 압축(Compaction) 과정에서 무거운 Value 데이터를 반복적으로 이동시킬 필요가 없어 Write Amplification 문제를 근본적으로 최소화했습니다.</li>
+            <li><strong>I/O 증폭 해결:</strong> 압축 과정에서 무거운 Value 데이터를 반복적으로 이동시킬 필요가 없어 Write Amplification 문제를 근본적으로 최소화했습니다.</li>
           </ul>
 
           <div class="content-spacer"></div>
@@ -594,12 +592,11 @@ footer {
           <p>두 번째 핵심 기술은 데이터의 사용 빈도에 따라 메모리 배치를 최적화하는 <strong>'동적 로그 파일 Garbage Collection'</strong> 파이프라인 구축입니다.</p>
           
           <div class="detail-image-container">
-            <div class="image-placeholder">
-              <span class="image-label">[그림 4] Log file Garbage Collection</span>
-            </div>
+            <img src="log_file_gc.png" alt="[그림 3] Log file Garbage Collection" class="portfolio-image">
+            <p class="image-caption">[그림 3] Log file Garbage Collection</p>
           </div>
 
-          <p>로그 파일은 <code>tail</code>과 <code>head</code> 포인터를 이용해 신뢰할 수 있는 구간만을 엄격히 추적합니다. GC 가동 시 유효함(Valid)이 입증된 데이터만 <code>head</code>로 마이그레이션하여 보존하고, 참조가 끊긴 무효(Invalid) 데이터의 점유 공간은 포인터 전진을 통해 즉시 반환함으로써 스토리지 파편화를 막고 공간 효율을 극대화했습니다.</p>
+          <p>로그 파일은 <code>tail</code>과 <code>head</code> 포인터를 이용해 신뢰할 수 있는 구간만을 엄격히 추적합니다. GC 가동 시 Valid가 입증된 데이터만 <code>head</code>로 마이그레이션하여 보존하고, 참조가 끊긴 Invalid 데이터의 점유 공간은 포인터 전진을 통해 즉시 반환함으로써 스토리지 파편화를 막고 공간 효율을 극대화했습니다.</p>
           <p>특히, LSM Tree 상위 레벨로 밀려난 데이터는 상대적으로 사용 빈도가 낮다는 점에 착안했습니다. 따라서 <strong>GC 과정에서 Cold 데이터는 용량이 큰 서브 메모리로 마이그레이션</strong>하고, 자주 사용하는 Hot 데이터는 주 메모리에 남겨둠으로써 한정된 주 메모리 자원을 가장 효율적으로 사용하는 데이터 순환 구조를 완성했습니다.</p>
 
           <div class="content-spacer"></div>
@@ -608,9 +605,8 @@ footer {
           <p>NUMA 시스템 환경을 구축하여 30개의 스레드로 100,000번의 입출력을 발생시키는 고부하 테스트를 통해 성능을 검증했습니다.</p>
           
           <div class="detail-image-container">
-            <div class="image-placeholder">
-              <span class="image-label">[그림 5] 기존 LSM Tree와 개선된 LSM Tree 성능 비교</span>
-            </div>
+            <img src="performance_comparison.png" alt="[그림 4] 기존 LSM Tree와 개선된 LSM Tree 성능 비교" class="portfolio-image">
+            <p class="image-caption">[그림 4] 기존 LSM Tree와 개선된 LSM Tree 성능 비교</p>
           </div>
 
           <p>실험 결과, 모든 데이터가 주 메모리에 있는 'Best Case'와 서브 메모리에 있는 'Worst Case' 사이에서 <strong>약 20%의 성능 편차를 보이던 기존 구조</strong>와 달리, 새롭게 구현한 아키텍처는 메모리 계층에 관계없이 <strong>편차 없는 안정적이고 균일한 처리 속도</strong>를 입증했습니다.</p>
@@ -621,6 +617,23 @@ footer {
 </div>
 
 <style>
+    .portfolio-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px; /* 모서리를 살짝 둥글게 */
+    border: 1px solid #e0e0e0; /* 연한 테두리로 깔끔하게 구분 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* 약간의 그림자 효과 */
+    display: block;
+    margin: 0 auto; /* 이미지 중앙 정렬 */
+  }
+    .image-caption {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 10px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+  }
   /* 포트폴리오 스타일 최적화 */
   .detail-body h3 {
     font-size: 1.25rem;
