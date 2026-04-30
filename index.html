@@ -728,7 +728,12 @@ footer {
       <div class="anim">
         <div class="detail-section-label">Details</div>
         <div class="detail-body">
+          <h3>1. ZNS 성능 모델 재설계</h3>
+          
           <p>저는 이러한 맹점을 해결하기 위해 가장 먼저 물리적 하드웨어 특성을 반영하여 ZNS 성능 모델을 재설계했습니다. 기존 시스템에서 하나로 묶여 있던 append와 write의 처리 파이프라인을 분석해 분리하고, 실제 디바이스에서 append가 write보다 지연 시간이 길다는 점을 반영하여 명시적으로 latency를 증가시켰습니다. 이와 더불어 Samsung 980 PRO의 실제 Erase Latency 스펙을 참고해 기존에 누락되어 있던 reset 연산 비용을 새롭게 구현했으며, 단순 지연이 아닌 연산의 실제 실행 시간까지 실측하여 합산하는 정교한 모델링을 완성했습니다.</p>
+          
+          
+          <h3>2. 멀티인스턴스 설계</h3>
           <!-- [그림 1], [그림 2] 나란히 배치 -->
           <div class="detail-image-container" style="margin: 35px 0; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
             <figure style="margin: 0; text-align: center; flex: 1; min-width: 280px;">
@@ -752,7 +757,9 @@ footer {
           </div>
 
           <p>동시에 기존 procfs로 동작하던 사용자 인터페이스를 sysfs로 개편하여, 사용자가 /sys/nvmevirt/config 디렉토리 하위에서 다수의 가상 디바이스를 독립적으로 생성하고 제어할 수 있는 체계적인 환경을 구축했습니다.</p>  
-          
+
+
+          <h3>3. 결과 및 테스트</h3>
           <p>이러한 코드 레벨의 치열한 아키텍처 개선 결과, 기존 시스템 대비 최대 256개의 독립적인 가상 인스턴스를 동시 구동할 수 있는 압도적인 시스템 확장성을 확보했습니다.</p>
           
           <!-- [그림 4] 중앙 배치 -->
