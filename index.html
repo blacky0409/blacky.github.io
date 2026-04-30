@@ -550,26 +550,129 @@ footer {
         한국정보과학회 KCC 2024 &nbsp;·&nbsp; LSM Tree &nbsp;·&nbsp; Tiered Memory &nbsp;·&nbsp; Hot/Cold Data Separation
       </div>
       <div class="detail-divider"></div>
+      
       <div class="anim">
         <div class="detail-section-label">Overview</div>
         <div class="detail-body">
-          <p>Tiered Memory 구조 환경에서 LSM Tree의 hot data와 cold data를 분리하여
-          저장하는 시스템을 구현한 연구입니다.</p>
-          <p>계층형 메모리 구조(Tiered Memory)에서 LSM Tree 접근 패턴을 분석하고,
-          데이터 지역성을 향상시키는 방향으로 LSM Tree 구조를 개선했습니다.</p>
+          <p>본 프로젝트는 CXL(Compute Express Link) 기술 발전으로 도입된 <strong>Tiered Memory 환경</strong>에서, 기존 LSM Tree 구조가 가지는 성능적 한계를 분석하고 이를 최적화한 새로운 아키텍처를 설계 및 구현한 연구입니다.</p>
+          
+          <div class="detail-image-container">
+            <div class="image-placeholder">
+              <span class="image-label">[그림 2] CXL를 통한 Tiered Memory 구조</span>
+            </div>
+          </div>
+
+          <p>최근 빠른 주 메모리(Fast Memory)와 용량이 큰 서브 메모리(Slow Memory)를 함께 사용하는 환경이 대두되었습니다. 하지만 기존의 <strong>Monolithic 구조 LSM Tree</strong>는 데이터 검색 시 속도가 느린 서브 메모리까지 탐색해야 하므로 이러한 계층형 환경에서 I/O 효율이 급격히 저하되는 한계가 있었습니다. 저는 이러한 하드웨어 구조적 한계를 소프트웨어 아키텍처 개선으로 해결하여 안정적인 성능을 확보하고자 했습니다.</p>
         </div>
       </div>
+      
       <div class="detail-divider"></div>
+      
       <div class="anim">
         <div class="detail-section-label">Details</div>
-        <div class="detail-placeholder">
-          ✏️ 이 영역은 직접 내용을 채워주세요.<br>
-          구현 방법, 실험 결과, 기여 내용 등을 자유롭게 작성하시면 됩니다.
+        <div class="detail-body">
+          
+          <h3>1. Key-Value 분리 및 아키텍처 슬림화</h3>
+          <p>문제를 해결하기 위해 WiscKey 논문에서 제시된 <strong>'Key sorting과 가비지 컬렉션의 Decoupling'</strong> 아이디어를 시스템 코드로 직접 구현했습니다.</p>
+          
+          <div class="detail-image-container">
+            <div class="image-placeholder">
+              <span class="image-label">[Figure 4] WiscKey Data Layout on SSD</span>
+            </div>
+          </div>
+
+          <p>입력 데이터에서 Key와 해당 Value의 물리적 주소(Location/Offset 및 Size)만을 LSM Tree에 저장하고, 실제 데이터 용량의 대부분을 차지하는 Value는 별도의 로그 파일(vLog)에 순차적으로 Append하는 방식을 취했습니다.</p>
+          <ul>
+            <li><strong>핵심 이점:</strong> Value 데이터가 트리에서 제외됨으로써 LSM Tree의 전체 크기가 획기적으로 축소됩니다.</li>
+            <li><strong>성능 최적화:</strong> 작아진 트리 전체를 접근 속도가 매우 빠른 주 메모리 상에 온전히 Cache할 수 있어, 검색 시 발생하는 서브 메모리 탐색 오버헤드를 완전히 제거했습니다.</li>
+            <li><strong>I/O 증폭 해결:</strong> 압축(Compaction) 과정에서 무거운 Value 데이터를 반복적으로 이동시킬 필요가 없어 Write Amplification 문제를 근본적으로 최소화했습니다.</li>
+          </ul>
+
+          <div class="content-spacer"></div>
+
+          <h3>2. Tiered Memory 인지형 동적 Garbage Collection</h3>
+          <p>두 번째 핵심 기술은 데이터의 사용 빈도에 따라 메모리 배치를 최적화하는 <strong>'동적 로그 파일 Garbage Collection'</strong> 파이프라인 구축입니다.</p>
+          
+          <div class="detail-image-container">
+            <div class="image-placeholder">
+              <span class="image-label">[그림 4] Log file Garbage Collection</span>
+            </div>
+          </div>
+
+          <p>로그 파일은 <code>tail</code>과 <code>head</code> 포인터를 이용해 신뢰할 수 있는 구간만을 엄격히 추적합니다. GC 가동 시 유효함(Valid)이 입증된 데이터만 <code>head</code>로 마이그레이션하여 보존하고, 참조가 끊긴 무효(Invalid) 데이터의 점유 공간은 포인터 전진을 통해 즉시 반환함으로써 스토리지 파편화를 막고 공간 효율을 극대화했습니다.</p>
+          <p>특히, LSM Tree 상위 레벨로 밀려난 데이터는 상대적으로 사용 빈도가 낮다는 점에 착안했습니다. 따라서 <strong>GC 과정에서 Cold 데이터는 용량이 큰 서브 메모리로 마이그레이션</strong>하고, 자주 사용하는 Hot 데이터는 주 메모리에 남겨둠으로써 한정된 주 메모리 자원을 가장 효율적으로 사용하는 데이터 순환 구조를 완성했습니다.</p>
+
+          <div class="content-spacer"></div>
+
+          <h3>3. 부하 테스트 및 실험 결과</h3>
+          <p>NUMA 시스템 환경을 구축하여 30개의 스레드로 100,000번의 입출력을 발생시키는 고부하 테스트를 통해 성능을 검증했습니다.</p>
+          
+          <div class="detail-image-container">
+            <div class="image-placeholder">
+              <span class="image-label">[그림 5] 기존 LSM Tree와 개선된 LSM Tree 성능 비교</span>
+            </div>
+          </div>
+
+          <p>실험 결과, 모든 데이터가 주 메모리에 있는 'Best Case'와 서브 메모리에 있는 'Worst Case' 사이에서 <strong>약 20%의 성능 편차를 보이던 기존 구조</strong>와 달리, 새롭게 구현한 아키텍처는 메모리 계층에 관계없이 <strong>편차 없는 안정적이고 균일한 처리 속도</strong>를 입증했습니다.</p>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  /* 포트폴리오 스타일 최적화 */
+  .detail-body h3 {
+    font-size: 1.25rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #4a3f35; /* 브라운 톤 액센트 */
+    border-left: 4px solid #eab676;
+    padding-left: 10px;
+  }
+  .detail-image-container {
+    margin: 1.5rem 0;
+    text-align: center;
+  }
+  .image-placeholder {
+    background-color: #f7f3f0; /* 연한 밀크티 배경 */
+    border: 1px dashed #c77d58;
+    border-radius: 8px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .image-label {
+    color: #c77d58;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .content-spacer {
+    height: 1.5rem;
+  }
+  .detail-body p {
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  .detail-body ul {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+  .detail-body li {
+    margin-bottom: 0.5rem;
+  }
+  strong {
+    color: #c77d58;
+  }
+  code {
+    background: #fdf1e6;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+</style>
 
 <div id="page-ksc" class="page">
   <div class="detail-page">
