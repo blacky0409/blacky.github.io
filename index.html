@@ -815,23 +815,59 @@ function showPage(id) {
   document.getElementById('nav-main-links').style.display = 'none';
   document.getElementById('nav-back').style.display = 'flex';
   window.scrollTo(0, 0);
+  
+  // 👉 추가: 화면을 이동할 때 URL 주소창 끝에 #id 를 붙여서 기록합니다.
+  window.location.hash = id; 
 }
+
 function goHome() {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-main').classList.add('active');
   document.getElementById('nav-main-links').style.display = 'flex';
   document.getElementById('nav-back').style.display = 'none';
   window.scrollTo(0, 0);
+  
+  // 👉 추가: 메인 화면으로 올 때는 URL에서 해시(#)를 깔끔하게 지웁니다.
+  history.pushState('', document.title, window.location.pathname + window.location.search);
 }
+
 function scrollToId(id) {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
 }
+
 const obs = new IntersectionObserver(
   entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
   { threshold: 0.08 }
 );
 document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+// ==========================================
+// 🚀 여기서부터가 새로고침 문제를 해결하는 핵심 코드입니다.
+// ==========================================
+
+// 1. 페이지가 처음 로드될 때 (또는 새로고침 될 때) 실행
+window.addEventListener('DOMContentLoaded', () => {
+  // URL에서 # 뒤의 글자를 가져옵니다. (예: #page-kcc -> page-kcc)
+  const hash = window.location.hash.replace('#', '');
+  
+  // 만약 해시가 존재하고, 그 아이디를 가진 페이지 요소가 있다면 그 페이지를 보여줍니다.
+  if (hash && document.getElementById(hash)) {
+    showPage(hash);
+  }
+});
+
+// 2. 브라우저의 '뒤로 가기'나 '앞으로 가기' 버튼을 눌렀을 때 대응
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash.replace('#', '');
+  
+  if (hash && document.getElementById(hash)) {
+    showPage(hash);
+  } else {
+    // 해시가 지워졌다면(메인 페이지라면) goHome()을 실행
+    goHome();
+  }
+});
 </script>
 </body>
 </html>
